@@ -45,6 +45,12 @@ resource "aws_lambda_function" "api" {
 }
 
 resource "aws_lambda_function_url" "api_url" {
+
+  cors {
+    allow_origins = ["https://mahir-05.github.io"]
+    allow_methods = ["GET"]
+  }
+
   function_name      = aws_lambda_function.api.function_name
   authorization_type = "NONE"
 }
@@ -59,4 +65,11 @@ resource "aws_lambda_permission" "allow_public_url" {
 
 output "api_url" {
   value = aws_lambda_function_url.api_url.function_url
+}
+
+resource "aws_lambda_permission" "allow_public_invoke" {
+  statement_id  = "AllowPublicInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.api.function_name
+  principal     = "*"
 }
